@@ -1,4 +1,4 @@
-# devops-camp-pipeline
+// devops-camp-pipeline
 
 pipeline {
     agent {

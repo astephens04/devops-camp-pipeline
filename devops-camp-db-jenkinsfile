@@ -18,7 +18,7 @@ pipeline {
                         env.COMMIT_HASH = sh(script: 'git log --format=format:%h -1 --follow database/database.sql', returnStdout: true).trim()
                     }
                 }
-                withCredentials([usernamePassword(credentialsId: 'astephens-harbor-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'astephens05-harbor-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     script {
                         env.BUILD_DB = sh(script: 'python check_harbor_db.py -h $COMMIT_HASH -i $DB_IMAGE_NAME -r $HARBOR_REGISTRY -p $HARBOR_PROJECT -c ${USERNAME}:${PASSWORD}', returnStdout: true).trim()
                     }
@@ -33,10 +33,10 @@ pipeline {
               stage('Database docker build') {
                   steps {
                       echo "Building database image"
-                      withCredentials([usernameColonPassword(credentialsId: 'astephens-harbor-auth', variable: 'HARBOR-AUTH')]) {
+                      withCredentials([usernameColonPassword(credentialsId: 'astephens05-harbor-auth', variable: 'HARBOR-AUTH')]) {
                           script {
                               sh 'docker build -t $DB_IMAGE_NAME-$COMMIT_HASH -f ./db/Dockerfile ./afs-labs-student'
-                              docker.withRegistry('https://$HARBOR_REGISTRY', 'astephens-harbor-auth') {
+                              docker.withRegistry('https://$HARBOR_REGISTRY', 'astephens05-harbor-auth') {
                                   sh 'docker tag $DB_IMAGE_NAME-$COMMIT_HASH $HARBOR_REGISTRY/$HARBOR_PROJECT/$DB_IMAGE_NAME:$COMMIT_HASH-$PIPELINE_HASH'
                                   sh 'docker push $HARBOR_REGISTRY/$HARBOR_PROJECT/$DB_IMAGE_NAME:$COMMIT_HASH-$PIPELINE_HASH'
                               }
